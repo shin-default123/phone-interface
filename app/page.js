@@ -2,230 +2,232 @@
 
 import React, { useState, useEffect } from 'react';
 
-// --- Icons (SVG) ---
+// --- Icons ---
 const Icons = {
+  Signal: () => <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M2 17h2v4H2v-4zm4-5h2v9H6v-9zm4-4h2v13h-2V8zm4-3h2v16h-2V5zm4-2h2v18h-2V3z"/></svg>,
+  Wifi: () => <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3C6.95 3 3 6.95 3 12c0 1.27.26 2.47.72 3.57L2 21l5.43-1.72c1.1.46 2.3.72 3.57.72 5.05 0 9-3.95 9-9s-3.95-9-9-9z"/></svg>,
   Battery: () => (
-    <svg width="25" height="12" viewBox="0 0 25 12" fill="none" className="opacity-100">
-      <rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="currentColor"/>
-      <rect x="2" y="2" width="18" height="8" rx="1" fill="currentColor"/>
-      <path d="M23 4C23.5523 4 24 4.44772 24 5V7C24 7.55228 23.5523 8 23 8V4Z" fill="currentColor"/>
-    </svg>
+    <div className="w-6 h-3 border border-white rounded-sm flex items-center p-0.5">
+      <div className="h-full w-4/5 bg-white rounded-sm"></div>
+    </div>
   ),
-  Wifi: () => (
-    <svg width="17" height="12" viewBox="0 0 17 12" fill="currentColor">
-      <path fillRule="evenodd" clipRule="evenodd" d="M8.50005 11.6433C9.07344 11.6433 9.54922 11.3934 9.87328 11.0268L15.9392 3.63065C16.1953 3.3184 16.143 2.85502 15.8118 2.60742C13.8188 1.11721 11.2828 0.356445 8.50005 0.356445C5.71732 0.356445 3.18128 1.11721 1.18826 2.60742C0.85707 2.85502 0.804828 3.3184 1.06093 3.63065L7.12682 11.0268C7.45088 11.3934 7.92666 11.6433 8.50005 11.6433Z" />
-    </svg>
-  ),
-  Signal: () => (
-    <svg width="18" height="11" viewBox="0 0 18 11" fill="currentColor">
-      <rect x="0" y="7" width="3" height="4" rx="1" />
-      <rect x="5" y="4.5" width="3" height="6.5" rx="1" />
-      <rect x="10" y="2" width="3" height="9" rx="1" />
-      <rect x="15" y="0" width="3" height="11" rx="1" className="opacity-30"/>
-    </svg>
-  ),
-  Info: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" className="opacity-50" />
-      <line x1="12" y1="16" x2="12" y2="12" />
-      <line x1="12" y1="8" x2="12.01" y2="8" />
-    </svg>
-  ),
-  PhoneFilled: () => (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-    </svg>
-  ),
-  // New Active Call Icons
-  Mute: () => <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/><line x1="3" y1="3" x2="21" y2="21"/></svg>,
-  Keypad: () => <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="19" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="5" cy="12" r="2"/><circle cx="5" cy="5" r="2"/><circle cx="19" cy="19" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="19" cy="5" r="2"/></svg>,
-  Speaker: () => <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>,
-  AddCall: () => <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>,
-  FaceTime: () => <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>,
-  Contacts: () => <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+  Avatar: () => <svg className="w-full h-full p-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>,
+  Phone: () => <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>,
+  Mute: () => <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>,
+  Keypad: () => <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 19c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 1c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12-8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-6 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0-6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>,
+  Speaker: () => <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>,
+  Hold: () => <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>,
+  AddCall: () => <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M14 8h3v3h2V8h3V6h-3V3h-2v3h-3v2zM2 17h2v4H2v-4zm4-5h2v9H6v-9zm4-4h2v13h-2V8zm4-3h2v16h-2V5zm4-2h2v18h-2V3z"/></svg>, // Simplified placeholder
+  Contacts: () => <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/></svg> // Simplified placeholder
 };
 
-export default function CallScreen() {
-  // State: 'incoming-locked', 'incoming-unlocked', 'active'
-  const [callState, setCallState] = useState('incoming-locked'); 
+export default function PhoneInterface() {
+  const [view, setView] = useState('incoming'); // 'incoming', 'active', 'ended'
   const [duration, setDuration] = useState(0);
+  const [time, setTime] = useState('');
+  
+  // Toggles
+  const [isMuted, setIsMuted] = useState(false);
+  const [isSpeaker, setIsSpeaker] = useState(false);
+  const [isOnHold, setIsOnHold] = useState(false);
 
-  // Timer logic for active call
+  // Status Bar Clock
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTime(now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: false }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Call Duration Timer
   useEffect(() => {
     let timer;
-    if (callState === 'active') {
-      timer = setInterval(() => {
-        setDuration(prev => prev + 1);
-      }, 1000);
-    } else {
-      setDuration(0);
+    if (view === 'active' && !isOnHold) {
+      timer = setInterval(() => setDuration(prev => prev + 1), 1000);
     }
     return () => clearInterval(timer);
-  }, [callState]);
+  }, [view, isOnHold]);
 
-  // Format seconds into MM:SS
-  const formatTime = (secs) => {
-    const mins = Math.floor(secs / 60);
-    const remainingSecs = secs % 60;
-    return `${mins.toString().padStart(2, '0')}:${remainingSecs.toString().padStart(2, '0')}`;
+  const formatDuration = (secs) => {
+    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const s = (secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
   };
 
-  const handleAnswer = () => setCallState('active');
-  const handleEndCall = () => setCallState('incoming-locked');
+  const handleAnswer = () => {
+    setDuration(0);
+    setView('active');
+  };
+
+  const handleDecline = () => {
+    setView('ended');
+  };
+
+  const handleEndCall = () => {
+    setView('ended');
+  };
+
+  const handleReset = () => {
+    setIsMuted(false);
+    setIsSpeaker(false);
+    setIsOnHold(false);
+    setDuration(0);
+    setView('incoming');
+  };
 
   return (
-    <div className="relative h-screen w-full bg-[#1c1c1e] text-white flex flex-col items-center overflow-hidden font-sans">
+    // Outer container: Simulating the phone screen in a centered desktop view
+    <div className="h-full w-full flex items-center justify-center bg-gray-900">
       
-      {/* Dev Controls (Top Left Overlay) */}
-      <div className="absolute top-0 left-0 z-50 p-2 opacity-50 hover:opacity-100 transition-opacity">
-        <select 
-          value={callState} 
-          onChange={(e) => setCallState(e.target.value)}
-          className="bg-black/50 text-xs text-white p-1 rounded"
-        >
-          <option value="incoming-locked">Locked (Slide)</option>
-          <option value="incoming-unlocked">Unlocked (Buttons)</option>
-          <option value="active">Active Call</option>
-        </select>
-      </div>
-
-      {/* --- Status Bar --- */}
-      <div className="w-full px-6 pt-3 flex justify-between items-center text-sm font-medium z-10">
-        <span>9:41</span>
-        <div className="flex items-center gap-2">
-          <Icons.Signal />
-          <Icons.Wifi />
-          <Icons.Battery />
-        </div>
-      </div>
-
-      {/* --- Main Content Area --- */}
-      <div className={`flex-1 flex flex-col items-center w-full transition-all duration-500 ${callState === 'active' ? 'justify-start pt-12' : 'justify-start pt-20'}`}>
+      {/* Phone Frame */}
+      <div 
+        className="relative w-full max-w-[400px] h-full max-h-[850px] bg-black sm:rounded-[40px] shadow-2xl overflow-hidden sm:border-[8px] sm:border-[#1a1a1a] flex flex-col"
+      >
         
-        {/* Info Icon (Only show on incoming) */}
-        {callState !== 'active' && (
-          <div className="w-full flex justify-end px-6 mb-2 animate-fade-in">
-             <Icons.Info />
+        {/* Notch (Visual Only) */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-7 bg-black rounded-b-[20px] z-50 flex items-center justify-center">
+          <div className="w-16 h-4 bg-black rounded-full flex items-center justify-end pr-2">
+            <div className="w-2 h-2 rounded-full bg-[#1a1a1a] border border-[#333]"></div>
           </div>
-        )}
-        
-        <div className="flex flex-col items-center gap-1">
-          {/* Label / Timer */}
-          {callState === 'active' ? (
-             <>
-               <h1 className="text-3xl font-semibold tracking-tight mb-1">
-                 Potential Spam
-               </h1>
-               <span className="text-gray-200 text-xl font-normal tracking-wide">
-                 {formatTime(duration)}
-               </span>
-             </>
-          ) : (
-            <>
-              <span className="text-gray-400 text-xl font-medium tracking-wide">
-                Potential Spam
-              </span>
-              <h1 className="text-4xl font-semibold tracking-tight">
-                +1 (813) 444-6439
-              </h1>
-            </>
-          )}
         </div>
 
-        {/* --- ACTIVE CALL GRID --- */}
-        {callState === 'active' && (
-          <div className="w-full px-8 mt-12 grid grid-cols-3 gap-y-8 gap-x-4 place-items-center animate-fade-in-up">
-            {[
-              { icon: Icons.Mute, label: 'mute' },
-              { icon: Icons.Keypad, label: 'keypad' },
-              { icon: Icons.Speaker, label: 'audio' },
-              { icon: Icons.AddCall, label: 'add call' },
-              { icon: Icons.FaceTime, label: 'FaceTime' },
-              { icon: Icons.Contacts, label: 'contacts' },
-            ].map((btn, i) => (
-              <div key={i} className="flex flex-col items-center gap-2">
-                <button className="h-[75px] w-[75px] rounded-full bg-[#ffffff1a] backdrop-blur-md flex items-center justify-center hover:bg-[#ffffff33] transition-colors">
-                  <btn.icon />
-                </button>
-                <span className="text-xs font-medium capitalize">{btn.label}</span>
-              </div>
-            ))}
+        {/* Status Bar */}
+        <div className="w-full h-12 flex items-end justify-between px-6 pb-2 z-40 text-white shrink-0">
+          <span className="text-[15px] font-semibold tracking-tight ml-2">{time}</span>
+          <div className="flex items-center gap-1.5 mr-2">
+             <Icons.Signal />
+             <Icons.Wifi />
+             <Icons.Battery />
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* --- Bottom Controls Area --- */}
-      <div className="w-full pb-12 px-8 flex flex-col justify-end min-h-[150px]">
-        
-        {/* Incoming: Message/Voicemail options */}
-        {callState !== 'active' && (
-           <div className="flex justify-between items-center px-4 mb-16 opacity-100 transition-opacity">
-            <div className="flex flex-col items-center gap-2">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-              <span className="text-xs font-medium">Message</span>
+        {/* ================= INCOMING VIEW ================= */}
+        {view === 'incoming' && (
+          <div className="flex-1 flex flex-col items-center pt-16 pb-12 px-6 relative z-30 animate-fade-in">
+            
+            {/* Caller Info */}
+            <div className="flex-1 w-full flex flex-col items-center">
+              <p className="text-gray-400 text-lg font-normal mb-8 tracking-wide">Mobile</p>
+              
+              <h1 className="text-white text-[34px] font-normal mb-2 tracking-tight leading-tight">Potential Spam</h1>
+              <p className="text-gray-400 text-xl tracking-wide">Agusan del Sur</p>
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="5.5" cy="11.5" r="4.5" /><circle cx="18.5" cy="11.5" r="4.5" /><path d="M5.5 15h13" strokeWidth="1" /></svg>
-              <span className="text-xs font-medium">Voicemail</span>
+
+            {/* Slide to Answer Area */}
+            <div className="w-full mt-auto mb-8 animate-slide-up">
+              
+              {/* Decline/Message Buttons row (optional based on your design, sticking to simple slide here) */}
+               
+               {/* The Slider */}
+               <div 
+                 className="relative w-full h-[80px] flex items-center cursor-pointer group"
+                 onClick={handleAnswer}
+               >
+                 <div className="absolute w-full text-center text-white/50 text-xl font-normal animate-pulse group-hover:text-white transition-colors">
+                    slide to answer
+                 </div>
+                 
+                 {/* Slider Button */}
+                 <div className="absolute left-1 z-10 h-[72px] w-[72px] bg-white rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:translate-x-2">
+                   <div className="text-green-500 animate-pulse">
+                     <Icons.Phone />
+                   </div>
+                 </div>
+                 
+                 {/* Slider Track */}
+                 <div className="w-full h-[80px] rounded-full bg-white/20 backdrop-blur-md border border-white/10" />
+               </div>
             </div>
           </div>
         )}
 
-        {/* --- Action Buttons --- */}
-        <div className="w-full">
-          {callState === 'incoming-locked' ? (
-            /* Locked: Slide to Answer */
-            <div 
-              className="relative w-full h-[80px] flex items-center cursor-pointer group"
-              onClick={handleAnswer}
-            >
-              <div className="absolute w-full text-center text-white/50 text-xl font-normal animate-pulse group-hover:text-white transition-colors">
-                 slide to answer
-              </div>
-              <div className="absolute left-1 z-10 h-[72px] w-[72px] bg-white rounded-full flex items-center justify-center shadow-lg transition-transform group-hover:translate-x-2">
-                <div className="text-green-500 animate-pulse">
-                  <Icons.PhoneFilled />
+        {/* ================= ACTIVE VIEW ================= */}
+        {view === 'active' && (
+          <div className="flex-1 flex flex-col items-center pt-12 pb-12 px-8 relative z-30 animate-fade-in">
+             
+             {/* Info */}
+             <div className="flex flex-col items-center w-full mb-12">
+                <div className="w-24 h-24 mb-6 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden">
+                   <Icons.Avatar />
                 </div>
-              </div>
-              <div className="w-full h-[80px] rounded-full bg-white/20 backdrop-blur-sm border border-white/10" />
-            </div>
-          ) : callState === 'incoming-unlocked' ? (
-            /* Unlocked: Two Buttons */
-            <div className="flex justify-between items-center px-8">
-              <div className="flex flex-col items-center gap-4">
-                <button 
+                <h1 className="text-white text-3xl font-normal mb-2">Potential Spam</h1>
+                <p className="text-white/80 text-xl font-normal tracking-wide">
+                  {isOnHold ? 'On Hold' : formatDuration(duration)}
+                </p>
+             </div>
+
+             {/* Controls Grid */}
+             <div className="w-full grid grid-cols-3 gap-y-8 gap-x-4 mb-auto animate-slide-up">
+                {[
+                  { icon: Icons.Mute, label: 'mute', active: isMuted, onClick: () => setIsMuted(!isMuted) },
+                  { icon: Icons.Keypad, label: 'keypad', active: false },
+                  { icon: Icons.Speaker, label: 'audio', active: isSpeaker, onClick: () => setIsSpeaker(!isSpeaker) },
+                  { icon: Icons.AddCall, label: 'add call', active: false },
+                  { icon: Icons.Avatar, label: 'FaceTime', active: false }, // Placeholder icon
+                  { icon: Icons.Contacts, label: 'contacts', active: false },
+                ].map((btn, i) => (
+                  <div key={i} className="flex flex-col items-center gap-2">
+                    <button 
+                      onClick={btn.onClick}
+                      className={`w-[75px] h-[75px] rounded-full flex items-center justify-center transition-all duration-200
+                        ${btn.active ? 'bg-white text-black' : 'bg-[#ffffff1a] backdrop-blur-md text-white hover:bg-[#ffffff33]'}`}
+                    >
+                      <div className="scale-90">{<btn.icon />}</div>
+                    </button>
+                    <span className="text-[13px] font-medium tracking-wide capitalize">{btn.label}</span>
+                  </div>
+                ))}
+             </div>
+
+             {/* End Call */}
+             <div className="mt-8 animate-slide-up">
+               <button 
                   onClick={handleEndCall}
-                  className="h-[75px] w-[75px] bg-[#EB4E3D] rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+                  className="w-[75px] h-[75px] rounded-full bg-[#ff3b30] flex items-center justify-center shadow-lg active:opacity-80 transition-opacity"
                 >
-                   <div className="text-white rotate-[135deg]"><Icons.PhoneFilled /></div>
-                </button>
-                <span className="text-sm font-medium">Decline</span>
-              </div>
-              <div className="flex flex-col items-center gap-4">
+                  <div className="transform rotate-[135deg]">
+                    <Icons.Phone />
+                  </div>
+               </button>
+             </div>
+          </div>
+        )}
+
+        {/* ================= ENDED VIEW ================= */}
+        {view === 'ended' && (
+          <div className="flex-1 flex flex-col items-center justify-center px-6 relative z-30 animate-fade-in">
+             <div className="w-24 h-24 mb-6 rounded-full bg-gray-800 flex items-center justify-center opacity-50 grayscale">
+                <Icons.Avatar />
+             </div>
+             
+             <h1 className="text-white text-3xl font-normal mb-2">Potential Spam</h1>
+             <p className="text-gray-400 text-lg mb-10">Call Ended</p>
+
+             <div className="flex flex-col gap-4 w-full px-8 animate-slide-up">
                 <button 
-                  onClick={handleAnswer}
-                  className="h-[75px] w-[75px] bg-[#30D158] rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+                  onClick={handleReset}
+                  className="w-full py-4 rounded-xl bg-[#1c1c1e] text-[#34c759] font-medium text-lg active:bg-[#2c2c2e] transition-colors"
                 >
-                  <div className="text-white"><Icons.PhoneFilled /></div>
+                  Call Again
                 </button>
-                <span className="text-sm font-medium">Accept</span>
-              </div>
-            </div>
-          ) : (
-            /* Active Call: End Button */
-            <div className="flex justify-center items-center">
-              <div className="flex flex-col items-center gap-4">
                 <button 
-                  onClick={handleEndCall}
-                  className="h-[75px] w-[75px] bg-[#EB4E3D] rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+                  onClick={handleReset}
+                  className="w-full py-4 rounded-xl bg-[#1c1c1e] text-[#0a84ff] font-medium text-lg active:bg-[#2c2c2e] transition-colors"
                 >
-                   <div className="text-white rotate-[135deg]"><Icons.PhoneFilled /></div>
+                  Close
                 </button>
-                <span className="text-sm font-medium">End Call</span>
-              </div>
-            </div>
-          )}
+             </div>
+          </div>
+        )}
+
+        {/* Home Indicator */}
+        <div className="w-full flex justify-center pb-2 pt-4">
+           <div className="w-[130px] h-[5px] bg-white rounded-full"></div>
         </div>
+
       </div>
     </div>
   );
